@@ -67,5 +67,4 @@ class CommunicationHandler:
     async def __aexit__(self, *args, **kwargs):
         await self.send_message("Connection Closed")
         await self.websocket.close()
-
         

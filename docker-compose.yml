@@ -1,0 +1,17 @@
+version: "3.9"
+
+networks:
+  socket-network:
+    driver: bridge
+
+services:
+  server:
+    container_name: socket-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: socket-server:latest
+    networks:
+      - socket-network
+    ports:
+      - 8000:8000/tcp

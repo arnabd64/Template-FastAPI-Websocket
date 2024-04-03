@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from src.handler import CommunicationHandler
 from typing import Annotated
+
 
 app = FastAPI()
 
@@ -31,3 +32,8 @@ async def socket(comms_handler: Annotated[CommunicationHandler, Depends()]):
 
             # Send Outgoing Message
             await handler.send_message("Message Received")
+
+
+@app.exception_handler(RuntimeError)
+async def validation_exception_handler(request, exc):
+    return HTTPException(status_code=400, detail=str(exc))
