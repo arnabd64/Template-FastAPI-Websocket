@@ -1,16 +1,21 @@
-ARG python-tag=3.10-slim-bullseye
+ARG tag=3.10-slim-bullseye
 
 # STEP 1: pull base image
-FROM python:${python-tag}
+FROM python:${tag}
 
 # STEP 2: create a passwordless sudo user
 ARG username=appuser
 ENV USER ${username}
-ENV HOME /home/${username}
-RUN useradd -m -u 1000 ${USER} && \
+RUN apt-get update && \
+    apt-get install -y sudo && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -u 1000 ${USER} && \
     echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
-WORKDIR ${HOME}/app
 USER ${USER}
+ENV PATH /home/${USER}/.local/bin:$PATH
+ENV HOME /home/${USER}
+WORKDIR ${HOME}/app
 
 # STEP 3: install python dependencies
 COPY --chown=${USER}:${USER} pyproject.toml poetry.lock ${HOME}/app/
